@@ -31,9 +31,8 @@ class Console {
 
                 tar.separateFile(separateName!!)
             } else {
-                mergeNames?.apply {
-                    if (isEmpty()) throw TarMergeFilesNotChooseException()
-                } ?: throw TarInvalidateMergeFilesException()
+                mergeNames?.apply { if (isEmpty()) throw TarMergeFilesNotChooseException() }
+                    ?: throw TarInvalidateMergeFilesException()
                 outputName ?: throw TarInvalidateOutputFileException()
 
                 tar.mergeFiles(mergeNames!!, outputName!!)
