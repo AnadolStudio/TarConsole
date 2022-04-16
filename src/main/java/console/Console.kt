@@ -6,7 +6,6 @@ import org.kohsuke.args4j.CmdLineParser
 import org.kohsuke.args4j.Option
 import org.kohsuke.args4j.spi.StringArrayOptionHandler
 import tar.*
-import tar.implementation.TarBase
 
 
 class Console {
@@ -23,11 +22,11 @@ class Console {
     fun commandReader(args: Array<String?>) {
         val parser = CmdLineParser(this)
         parser.parseArgument(args.toMutableList())
-        val tar = TarBase(wrapper = TarWrapper.XmlWrapper())
+        val tar = ITar.TarBase(wrapper = TarWrapper.XmlWrapper())
         try {
             if (separateName != null) {
 
-                mergeNames?.let {throw TarInvalidateMergeFilesException()}
+                mergeNames?.let { throw TarInvalidateMergeFilesException() }
                 outputName?.let { throw TarInvalidateOutputFileException() }
 
                 tar.separateFile(separateName!!)

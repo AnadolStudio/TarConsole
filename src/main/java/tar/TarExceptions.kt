@@ -1,6 +1,6 @@
 package tar
 
-sealed class TarException(message: String) : Exception(message)
+sealed class TarException(message: String) : Exception("TarException: $message")
 
 class TarMergeFilesNotChooseException : TarException("Merge files not choose")
 
