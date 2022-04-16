@@ -20,8 +20,8 @@ class Console {
 
     @Throws(CmdLineException::class)
     fun commandReader(args: Array<String?>) {
-        val parser = CmdLineParser(this)
-        parser.parseArgument(args.toMutableList())
+        CmdLineParser(this).parseArgument(args.toMutableList())
+
         val tar = ITar.TarBase(wrapper = TarWrapper.XmlWrapper())
         try {
             if (separateName != null) {
