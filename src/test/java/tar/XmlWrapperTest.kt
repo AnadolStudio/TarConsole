@@ -41,8 +41,6 @@ class XmlWrapperTest {
         assertEquals(2, result.size)
         assertEquals(Pair(nameChildDataOne, someText), Pair(result[0].first, result[0].second))
         assertEquals(Pair(nameChildDataTwo, someText), Pair(result[1].first, result[1].second))
-
-        result = wrapper.unWrap("")
     }
 
     @Test
