@@ -31,7 +31,7 @@ interface TarWrapper {
             val pattern: Pattern = Pattern.compile("(\n<(.+\\.txt)>([.\\w\\D]*)</(\\2)>\n)")
             //Хоть в документации и написано, что "." - любой символ, но \n - под это не попадает
             // [.\w\D] - больше похоже на костыль, но лечит данную проблему
-            val matcher = pattern.matcher(text.replace("\r".toRegex(), ""))
+            val matcher = pattern.matcher(text.replace("\r", ""))
 
             while (matcher.find()) {
                 val name = matcher.group(2)

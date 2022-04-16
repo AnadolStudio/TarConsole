@@ -23,7 +23,9 @@ class ConsoleTest {
         Main.main(command)
         val outFileText = FileUtils.readFileToString(File(outFile), Charsets.UTF_8)
         val sample3Text = FileUtils.readFileToString(File(sample3), Charsets.UTF_8)
-        assertEquals(outFileText.replace("\r".toRegex(), ""), sample3Text.replace("\r".toRegex(), ""))
+        assertEquals(outFileText.replace("\r", ""), sample3Text.replace("\r", ""))
+        //Кажется, FileUtils - добавляет \r в начало каждой строки, визуально различий в файлах нет, но тесты не проходят
+        // для этого делаю replace
     }
 
     @Test
