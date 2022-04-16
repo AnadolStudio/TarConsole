@@ -49,10 +49,7 @@ interface ITar {
             if (this === other) return true
             if (javaClass != other?.javaClass) return false
 
-            other as TarBase
-
-            if (encoding != other.encoding) return false
-
+            if (encoding != (other as TarBase).encoding) return false
             return true
         }
 
