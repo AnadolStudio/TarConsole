@@ -2,7 +2,6 @@ package tar
 
 import java.util.regex.Pattern
 
-
 interface TarWrapper {
 
     fun wrap(name: String, text: String): String
@@ -28,22 +27,32 @@ interface TarWrapper {
         override fun unWrap(text: String): List<Pair<String, String>> {
             val result = mutableListOf<Pair<String, String>>()
 
+            //TODO 1)
+            // LinckedList
+
+            //TODO
+            // 1) LINE_SEPARATOR
+            // 2) LinkedHashMap
+
             val pattern: Pattern = Pattern.compile("(\n<(.+\\.txt)>([.\\w\\D]*)</(\\2)>\n)")
-            //Хоть в документации и написано, что "." - любой символ, но \n - под это не попадает
+            // Хоть в документации и написано, что "." - любой символ, но \n - под это не попадает
             // [.\w\D] - больше похоже на костыль, но лечит данную проблему
             val matcher = pattern.matcher(text.replace("\r", ""))
 
             while (matcher.find()) {
-                val name = matcher.group(2)
+                val path = matcher.group(2)
                 val data = deleteExtremeParagraphs(matcher.group(3))
 
-                result.add(Pair(name, data))
+                result.add(Pair(path, data))
+
                 if (unwrapflag == Flag.ALL) {
                     val child = unWrap(data)
+
                     if (child.isNotEmpty()) {
                         result.removeAt(result.lastIndex)
                         result.addAll(child)
                     }
+
                 }
             }
 
@@ -52,12 +61,15 @@ interface TarWrapper {
 
         private fun deleteExtremeParagraphs(text: String): String {
             var result = text
+
             if (result.first() == '\n') {
                 result = result.removeRange(0, 1)
             }
+
             if (result.last() == '\n') {
                 result = result.removeRange(result.lastIndex, result.length)
             }
+
             return result
         }
     }

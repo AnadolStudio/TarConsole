@@ -5,8 +5,12 @@ import org.kohsuke.args4j.CmdLineException
 import org.kohsuke.args4j.CmdLineParser
 import org.kohsuke.args4j.Option
 import org.kohsuke.args4j.spi.StringArrayOptionHandler
-import tar.*
-
+import tar.ITar
+import tar.TarException
+import tar.TarInvalidateMergeFilesException
+import tar.TarInvalidateOutputFileException
+import tar.TarMergeFilesNotChooseException
+import tar.TarWrapper
 
 class Console {
     @Argument(metaVar = "mergeNames", handler = StringArrayOptionHandler::class, usage = "File names to merge")
@@ -32,7 +36,7 @@ class Console {
                 tar.separateFile(separateName!!)
             } else {
                 mergeNames?.apply { if (isEmpty()) throw TarMergeFilesNotChooseException() }
-                    ?: throw TarInvalidateMergeFilesException()
+                        ?: throw TarInvalidateMergeFilesException()
                 outputName ?: throw TarInvalidateOutputFileException()
 
                 tar.mergeFiles(mergeNames!!, outputName!!)
