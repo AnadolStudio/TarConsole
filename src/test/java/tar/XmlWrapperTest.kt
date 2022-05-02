@@ -9,8 +9,15 @@ import kotlin.test.assertTrue
 
 class XmlWrapperTest {
 
+    //TODO
+    // 1) naming
+    // 2) resources
+
     @Test
     fun xmlWrapTest() {
+
+        //TODO
+
         val name = "1.txt"
         val someText = "33333"
         val wrapper = XmlWrapper()
@@ -19,6 +26,9 @@ class XmlWrapperTest {
 
     @Test
     fun xmlUnwrapTest() {
+
+        //TODO
+
         var wrapper = XmlWrapper()
 
         val dataName = "1.txt"
@@ -46,6 +56,7 @@ class XmlWrapperTest {
     @Test
     fun simpleTest() {
         val pattern: Pattern = Pattern.compile("<(.+\\.txt)>([.\\w\\D]*)</(\\1)>")
+//        val pattern: Pattern = Pattern.compile("<(.+\\.txt)>(.*)</(\\1)>")
 
         val nameData = "1.txt"
         val text = "<$nameData>1 \nsd 112d ds  xxcc*0/ \rs1_</$nameData>"
