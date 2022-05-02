@@ -52,13 +52,13 @@ class TarTest {
         //separate
         var command = arrayOf("", "-u", "outFile")
         assertThrows<TarInvalidateMergeFilesException> {
-            console.commandReader(command)
+            console.validateCommand(command)
         }
 
         console.clear()
         command = arrayOf("-u", "separateFile","-out", "outFile")
         assertThrows<TarInvalidateOutputFileException> {
-            console.commandReader(command)
+            console.validateCommand(command)
         }
 
         //merge
@@ -66,23 +66,22 @@ class TarTest {
         command = arrayOf("path1", "path2", "outFile")
 
         assertThrows<TarInvalidateOutputFileException> {
-            console.commandReader(command)
+            console.validateCommand(command)
         }
 
         console.clear()
         command = arrayOf("-out", "outFile")
 
         assertThrows<TarInvalidateMergeFilesException> {
-            console.commandReader(command)
+            console.validateCommand(command)
         }
 
         console.clear()
         command = arrayOf("", "-out", "outFile")
 
         assertThrows<TarMergeFilesNotChooseException> {
-            console.commandReader(command)
+            console.validateCommand(command)
         }
-
 
     }
 

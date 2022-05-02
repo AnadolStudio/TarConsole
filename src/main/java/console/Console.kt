@@ -7,7 +7,7 @@ import org.kohsuke.args4j.Option
 import org.kohsuke.args4j.spi.StringArrayOptionHandler
 import tar.*
 
-open class Console {
+class Console {
     @Argument(metaVar = "mergeNames", handler = StringArrayOptionHandler::class, usage = "File names to merge")
     private var mergeNames: Array<String>? = null
 
@@ -25,7 +25,7 @@ open class Console {
             TarInvalidateOutputFileException::class,
             TarMergeFilesNotChooseException::class)
     fun commandReader(args: Array<String>) {
-        CmdLineParser(this).parseArgument(args.toMutableList())
+        validateCommand(args)
 
         val flag = allOpt
                 ?.let { TarWrapper.XmlWrapper.Flag.ALL }
@@ -34,11 +34,21 @@ open class Console {
         val tar = Tar.Base(wrapper = TarWrapper.XmlWrapper(flag))
 
         if (separateName != null) {
+            tar.separateFile(separateName!!)
+        } else {
+            tar.mergeFiles(mergeNames!!, outputName!!)
+        }
+
+    }
+
+    fun validateCommand(args: Array<String>) {
+        clear()
+        CmdLineParser(this).parseArgument(args.toMutableList())
+
+        if (separateName != null) {
 
             mergeNames?.let { throw TarInvalidateMergeFilesException() }
             outputName?.let { throw TarInvalidateOutputFileException() }
-
-            tar.separateFile(separateName!!)
         } else {
             mergeNames
                     ?.forEach { path ->
@@ -47,8 +57,6 @@ open class Console {
                     ?: throw TarInvalidateMergeFilesException()
 
             outputName ?: throw TarInvalidateOutputFileException()
-
-            tar.mergeFiles(mergeNames!!, outputName!!)
         }
     }
 
