@@ -1,72 +1,80 @@
 package tar
 
+import java.util.regex.Matcher
 import java.util.regex.Pattern
 
 interface TarWrapper {
 
-    fun wrap(name: String, text: String): String
+    fun wrap(path: String, text: String): String
 
     /**
      * Возвращает массив пар, где первый объект - имя, второй - данные(текст)
      */
-    fun unWrap(text: String): List<Pair<String, String>>
+    fun unWrap(text: String): LinkedHashMap<String, String>
 
-    class XmlWrapper(private val unwrapflag: Flag = Flag.LAZY) : TarWrapper {
+    class XmlWrapper(var unwrapFlag: Flag = Flag.LAZY) : TarWrapper {
+
+        companion object{
+            const val SEPARATOR = '\u0000'
+
+            val pattern: Pattern = Pattern.compile(
+                    "(<(.+\\.txt)>(.*)</(\\2)>)",
+                    Pattern.DOTALL or Pattern.UNIX_LINES or Pattern.MULTILINE
+            )
+
+        }
+
         /**
          * ALL Unwrap для всех вложенных блоков
          * LAZY Unwrap только для блоков верхнего уровня
          */
         enum class Flag { ALL, LAZY }
 
-        override fun wrap(name: String, text: String): String = StringBuilder().apply {
-            append("\n<$name>")
-            append("\n$text\n")
-            append("</$name>\n")
+        override fun wrap(path: String, text: String): String = StringBuilder().apply {
+            val name = path.substring(path.lastIndexOf('/') + 1)
+
+            append("<$name>")
+            append("$SEPARATOR$text$SEPARATOR")
+            append("</$name>")
         }.toString()
 
-        override fun unWrap(text: String): List<Pair<String, String>> {
-            val result = mutableListOf<Pair<String, String>>()
-
-            //TODO 1)
-            // LinckedList
-
-            //TODO
-            // 1) LINE_SEPARATOR
-            // 2) LinkedHashMap
-
-            val pattern: Pattern = Pattern.compile("(\n<(.+\\.txt)>([.\\w\\D]*)</(\\2)>\n)")
-            // Хоть в документации и написано, что "." - любой символ, но \n - под это не попадает
-            // [.\w\D] - больше похоже на костыль, но лечит данную проблему
-            val matcher = pattern.matcher(text.replace("\r", ""))
+        override fun unWrap(text: String): LinkedHashMap<String, String> {
+            val result = linkedMapOf<String, String>()
+            val matcher = matcher(text)
 
             while (matcher.find()) {
-                val path = matcher.group(2)
+                var path = matcher.group(2)
                 val data = deleteExtremeParagraphs(matcher.group(3))
 
-                result.add(Pair(path, data))
+                if (result[path] != null) {
+                    path = "${System.currentTimeMillis()}$path"
+                }
 
-                if (unwrapflag == Flag.ALL) {
+                result[path] = data
+
+                if (unwrapFlag == Flag.ALL) {
                     val child = unWrap(data)
 
                     if (child.isNotEmpty()) {
-                        result.removeAt(result.lastIndex)
-                        result.addAll(child)
+                        result.remove(path)
+                        result.putAll(child)
                     }
-
                 }
             }
 
             return result
         }
 
+        private fun matcher(text: String): Matcher = pattern.matcher(text)
+
         private fun deleteExtremeParagraphs(text: String): String {
             var result = text
 
-            if (result.first() == '\n') {
+            if (result.first() == SEPARATOR) {
                 result = result.removeRange(0, 1)
             }
 
-            if (result.last() == '\n') {
+            if (result.last() == SEPARATOR) {
                 result = result.removeRange(result.lastIndex, result.length)
             }
 

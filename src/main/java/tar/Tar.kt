@@ -6,7 +6,7 @@ import java.io.File
 import java.io.IOException
 import java.nio.charset.Charset
 
-interface ITar {
+interface Tar {
 
     /**
      * Получает на вход пути к файлам, которые сливает
@@ -20,7 +20,7 @@ interface ITar {
     @Throws(IOException::class)
     fun separateFile(path: String)
 
-    class TarBase(private val encoding: Charset = Charsets.UTF_8, private val wrapper: TarWrapper) : ITar {
+    class Base(private val encoding: Charset = Charsets.UTF_8, private val wrapper: TarWrapper) : Tar {
         // Deprecated code это плохо, но под капотом либа его же и использует.
         // Поэтому причину диприкейта я не пойму? ибо альтернативы для диприкейта нет
 
@@ -41,8 +41,8 @@ interface ITar {
             val textArray = wrapper.unWrap(text)
 
             textArray.forEach {
-                val file = File(it.first)
-                FileUtils.writeStringToFile(file, it.second, encoding)
+                val file = File(it.key)
+                FileUtils.writeStringToFile(file, it.value, encoding)
             }
 
         }

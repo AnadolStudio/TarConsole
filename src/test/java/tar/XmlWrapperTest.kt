@@ -3,64 +3,76 @@ package tar
 import org.junit.Assert.assertEquals
 import org.junit.Test
 import tar.TarWrapper.XmlWrapper
+import tar.TarWrapper.XmlWrapper.Companion.SEPARATOR
 import tar.TarWrapper.XmlWrapper.Flag
-import java.util.regex.Pattern
 import kotlin.test.assertTrue
 
 class XmlWrapperTest {
 
-    //TODO
-    // 1) naming
-    // 2) resources
-
     @Test
-    fun xmlWrapTest() {
-
-        //TODO
-
+    fun wrapTest() {
         val name = "1.txt"
-        val someText = "33333"
+        wrapSimpleTest(name, "someText", "path/$name")
+        wrapSimpleTest(name, "", "path/$name")
+    }
+
+    private fun wrapSimpleTest(name: String, someText: String, path: String) {
         val wrapper = XmlWrapper()
-        assertEquals("\n<$name>\n$someText\n</$name>\n", wrapper.wrap(name, someText))
+        assertEquals("<$name>$SEPARATOR$someText$SEPARATOR</$name>", wrapper.wrap(path, someText))
+        assertEquals("<$name>$SEPARATOR$someText$SEPARATOR</$name>", wrapper.wrap(name, someText))
     }
 
     @Test
-    fun xmlUnwrapTest() {
+    fun unwrapWithFlagTest() {
 
-        //TODO
+        val wrapper = XmlWrapper(Flag.LAZY)
 
-        var wrapper = XmlWrapper()
+        val someText = "someText"
+
+        val nameChildDataOne = "2.txt"
+        val childDataOne = wrapper.wrap(nameChildDataOne, someText)
+
+        val nameChildDataTwo = "3.txt"
+        val childDataTwo = wrapper.wrap(nameChildDataTwo, someText)
 
         val dataName = "1.txt"
-        val nameChildDataOne = "2.txt"
-        val nameChildDataTwo = "3.txt"
-
-        val someText = "33333"
-        val childDataOne = wrapper.wrap(nameChildDataOne, someText)
-        val childDataTwo = wrapper.wrap(nameChildDataTwo, someText)
         val data = "$childDataOne$childDataTwo"
-        val text = wrapper.wrap(dataName, data)
+        val wrapText = wrapper.wrap(dataName, data)
 
-        var result = wrapper.unWrap(text)
+        var result = wrapper.unWrap(wrapText)
         assertEquals(1, result.size)
-        assertEquals(Pair(dataName, data), Pair(result[0].first, result[0].second))
+        assertEquals(data, result[dataName])
 
-        wrapper = XmlWrapper(Flag.ALL)
-
-        result = wrapper.unWrap(text)
+        wrapper.unwrapFlag = Flag.ALL
+        result = wrapper.unWrap(wrapText)
         assertEquals(2, result.size)
-        assertEquals(Pair(nameChildDataOne, someText), Pair(result[0].first, result[0].second))
-        assertEquals(Pair(nameChildDataTwo, someText), Pair(result[1].first, result[1].second))
+        assertEquals(someText, result[nameChildDataOne])
+        assertEquals(someText, result[nameChildDataTwo])
     }
 
     @Test
-    fun simpleTest() {
-        val pattern: Pattern = Pattern.compile("<(.+\\.txt)>([.\\w\\D]*)</(\\1)>")
-//        val pattern: Pattern = Pattern.compile("<(.+\\.txt)>(.*)</(\\1)>")
+    fun unwrapEmptyTest() {
+        val wrapper = XmlWrapper(Flag.LAZY)
+        val name = "1.txt"
 
-        val nameData = "1.txt"
-        val text = "<$nameData>1 \nsd 112d ds  xxcc*0/ \rs1_</$nameData>"
-        val matcher = pattern.matcher(text)
+        val wrapText = wrapper.wrap(name, "")
+        val result = wrapper.unWrap(wrapText)
+
+        assertEquals("", result[name])
+    }
+
+    @Test
+    fun regexTest() {
+        val pattern = XmlWrapper.pattern
+        var nameData = "1>.txt"
+        var text = "<$nameData>${SEPARATOR}1\nsd >112d ds <dsdf> xxcc*0/ \rs1_$SEPARATOR</$nameData>"
+        var matcher = pattern.matcher(text)
+
+        assertTrue(matcher.find())
+
+        nameData = "<1.txt></1.txt>.txt"
+        text = "<$nameData>${SEPARATOR}1\nsd >112d ds <dsdf> xxcc*0/ \rs1_${SEPARATOR}</$nameData>"
+        matcher = pattern.matcher(text)
 
         assertTrue(matcher.find())
     }
