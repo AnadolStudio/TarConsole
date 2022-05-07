@@ -15,7 +15,7 @@ interface TarWrapper {
     class XmlWrapper(var unwrapFlag: Flag = Flag.LAZY) : TarWrapper {
 
         companion object{
-            const val SEPARATOR = "\u0000"
+            const val SEPARATOR = '\u0000'
 
             val pattern: Pattern = Pattern.compile(
                     "(<(.+\\.txt)>(.*)</(\\2)>)",
@@ -70,11 +70,11 @@ interface TarWrapper {
         private fun deleteExtremeParagraphs(text: String): String {
             var result = text
 
-            if (result.first() == '\u0000') {
+            if (result.first() == SEPARATOR) {
                 result = result.removeRange(0, 1)
             }
 
-            if (result.last() == '\u0000') {
+            if (result.last() == SEPARATOR) {
                 result = result.removeRange(result.lastIndex, result.length)
             }
 
