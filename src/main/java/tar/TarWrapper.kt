@@ -14,14 +14,13 @@ interface TarWrapper {
 
     class XmlWrapper(var unwrapFlag: Flag = Flag.LAZY) : TarWrapper {
 
-        companion object{
+        companion object {
             const val SEPARATOR = '\u0000'
 
             val pattern: Pattern = Pattern.compile(
-                    "(<(.+\\.txt)>(.*)</(\\2)>)",
+                    "(<(.+\\.txt)>$SEPARATOR(.*)$SEPARATOR</(\\2)>)",
                     Pattern.DOTALL or Pattern.UNIX_LINES or Pattern.MULTILINE
             )
-
         }
 
         /**
@@ -70,12 +69,15 @@ interface TarWrapper {
         private fun deleteExtremeParagraphs(text: String): String {
             var result = text
 
-            if (result.first() == SEPARATOR) {
-                result = result.removeRange(0, 1)
-            }
+            if (result.isNotEmpty()) {
 
-            if (result.last() == SEPARATOR) {
-                result = result.removeRange(result.lastIndex, result.length)
+                if (result.first() == SEPARATOR) {
+                    result = result.removeRange(0, 1)
+                }
+
+                if (result.last() == SEPARATOR) {
+                    result = result.removeRange(result.lastIndex, result.length)
+                }
             }
 
             return result
