@@ -21,6 +21,7 @@ class TarTest {
         val sample3 = cl.getResource("Sample3.txt")
         val outFile = "src/main/resources/OutText.txt"
 
+
         var command = arrayOf<String>(sample1.path, sample2.path, "-out", outFile)
         Main.main(command)
         val outFileText = FileUtils.readFileToString(File(outFile), Charsets.UTF_8)
