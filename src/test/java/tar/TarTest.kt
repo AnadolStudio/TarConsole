@@ -16,8 +16,8 @@ class TarTest {
 
         // WRAP
         val cl = this.javaClass.classLoader
-        val sample1 = cl.getResource("SimpleSample/Sample1.txt")
-        val sample2 = cl.getResource("SimpleSample/Sample2.txt")
+        val sample1 = cl.getResource("simplesample/Sample1.txt")
+        val sample2 = cl.getResource("simplesample/Sample2.txt")
         val sample3 = cl.getResource("Sample3.txt")
         val outFile = "src/main/resources/OutText.txt"
 
@@ -32,8 +32,8 @@ class TarTest {
         command = arrayOf("-u", inputFile.path)
         Main.main(command)
 
-        val expectedFile1 = File(cl.getResource("SimpleSample/Sample1.txt").toURI())
-        val expectedFile2 = File(cl.getResource("SimpleSample/Sample2.txt").toURI())
+        val expectedFile1 = File(cl.getResource("simplesample/Sample1.txt").toURI())
+        val expectedFile2 = File(cl.getResource("simplesample/Sample2.txt").toURI())
 
         val expectedText1 = FileUtils.readFileToString(expectedFile1, Charsets.UTF_8)
         val expectedText2 = FileUtils.readFileToString(expectedFile2, Charsets.UTF_8)
