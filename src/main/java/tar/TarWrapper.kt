@@ -21,11 +21,6 @@ interface TarWrapper {
                     "(<(.+\\.txt)>$SEPARATOR(.*)$SEPARATOR</(\\2)>)",
                     Pattern.DOTALL or Pattern.UNIX_LINES or Pattern.MULTILINE
             )
-            /*val pattern: Pattern = Pattern.compile(
-                    "(<(.+\\.txt)>(.*)</(\\2)>)",
-                    Pattern.DOTALL or Pattern.UNIX_LINES or Pattern.MULTILINE
-            )*/
-
         }
 
         /**
